@@ -19,8 +19,9 @@ from timetable.models import TempClass, TimetableUseDate, Classroom, Teacher, Cl
 
 UTC = datetime.timezone(datetime.timedelta(hours=0))
 
+
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -85,8 +86,6 @@ class TeacherView(APIView):
 
 
 class ClassTimeView(APIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
     def get(self, request, grade, room):
         classroom = get_object_or_404(Classroom, grade=grade, room=room)
         queryset = ClassTime.objects.filter(classroom=classroom).order_by(
@@ -97,8 +96,6 @@ class ClassTimeView(APIView):
 
 
 class TempClassTimeView(APIView):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
     def get(self, request, grade, room):
         classroom = get_object_or_404(Classroom, grade=grade, room=room)
         TODAY = timezone.now()
