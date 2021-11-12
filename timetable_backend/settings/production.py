@@ -1,4 +1,5 @@
 from .base import *
+import os
 
 
 DEBUG = False
@@ -20,3 +21,9 @@ DATABASES = {
 
 CORS_ORIGIN_WHITELIST = []
 CORS_ALLOW_CREDENTIALS = True
+
+
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR.parent, "nginx_root", "static"))
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR.parent, "nginx_root", "media"))
