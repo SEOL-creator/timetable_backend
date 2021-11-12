@@ -22,7 +22,7 @@ DATABASES = {
 }
 
 
-CORS_ORIGIN_WHITELIST = ["http://classtime.kro.kr/"]
+CORS_ORIGIN_WHITELIST = ["http://classtime.kro.kr"]
 CORS_ALLOW_CREDENTIALS = True
 
 
