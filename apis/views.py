@@ -2,11 +2,11 @@ import datetime
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import permissions, serializers
+from rest_framework import permissions, generics
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from accounts.serializers import UserSerializer
+from accounts.serializers import RegisterSerializer, UserSerializer
 from accounts.models import User
 from timetable.serializers import (
     ClassTimeSerializer,
@@ -20,21 +20,18 @@ from timetable.models import TempClass, TimetableUseDate, Classroom, Teacher, Cl
 UTC = datetime.timezone(datetime.timedelta(hours=0))
 
 
-def register(request):
-    if request.method == "POST":
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-
-
 @api_view(["GET"])
 def User_View(request):
     if request.method == "GET":
         queryset = request.user
         serializer = UserSerializer(queryset)
         return Response(serializer.data)
+
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = RegisterSerializer
 
 
 class TimetableView(APIView):

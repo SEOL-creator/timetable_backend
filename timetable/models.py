@@ -191,7 +191,8 @@ class RemoteURL(models.Model):
     classroom = models.ForeignKey(
         Classroom, verbose_name="학급", on_delete=models.CASCADE
     )
-    url = models.CharField(max_length=600, verbose_name="URL")
+    pcurl = models.CharField(max_length=600, verbose_name="PCURL")
+    mobileurl = models.CharField(max_length=600, verbose_name="MobileURL", blank=True)
 
     def __str__(self):
         return f"{self.classroom} {self._class.name}"

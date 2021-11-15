@@ -10,6 +10,7 @@ router = DefaultRouter()
 urlpatterns = [
     path("", include(router.urls)),
     path("token/", CustomAuthToken.as_view(), name="token"),
+    path("register/", views.RegisterView.as_view(), name="register"),
     path("timetable/", views.TimetableView.as_view(), name="timetable"),
     path("classroom/", views.ClassroomView.as_view(), name="classroomlist"),
     path("teacher/", views.TeacherListView.as_view(), name="teacherlist"),
