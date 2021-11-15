@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "axes",
     "accounts",
     "timetable",
     "usermemo",
@@ -71,6 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "timetable_backend.urls"
@@ -98,6 +100,11 @@ WSGI_APPLICATION = "timetable_backend.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {}
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 
 AUTH_USER_MODEL = "accounts.User"
@@ -127,10 +134,13 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        'rest_framework.authentication.TokenAuthentication',
+        "rest_framework.authentication.TokenAuthentication",
     ),
 }
 
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=30)
+AXES_USERNAME_FORM_FIELD = "email"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

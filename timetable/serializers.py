@@ -68,7 +68,7 @@ class ClassTimeSerializer(serializers.ModelSerializer):
     def get_remoteURL(self, obj):
         urlOBJ = RemoteURL.objects.filter(_class=obj._class, classroom=obj.classroom)
         if urlOBJ:
-            return urlOBJ[0].url
+            return {"pc": urlOBJ[0].pcurl, "mobile": urlOBJ[0].mobileurl}
         else:
             return ""
 
