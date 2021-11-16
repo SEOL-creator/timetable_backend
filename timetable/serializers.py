@@ -81,6 +81,15 @@ class TempClassSerializer(serializers.ModelSerializer):
     _class = ClassSerializer(read_only=True)
     classroom = ClassroomSerializer(read_only=True)
 
+    remoteURL = serializers.SerializerMethodField()
+
+    def get_remoteURL(self, obj):
+        urlOBJ = RemoteURL.objects.filter(_class=obj._class, classroom=obj.classroom)
+        if urlOBJ:
+            return {"pc": urlOBJ[0].pcurl, "mobile": urlOBJ[0].mobileurl}
+        else:
+            return ""
+
     class Meta:
         model = TempClass
         fields = "__all__"
