@@ -24,7 +24,7 @@ DATABASES = {
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
 
 
-CORS_ORIGIN_WHITELIST = ["http://classtime.kro.kr"]
+CORS_ORIGIN_WHITELIST = ["https://classtime.kro.kr"]
 CORS_ALLOW_CREDENTIALS = True
 
 
