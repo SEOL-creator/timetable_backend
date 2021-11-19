@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     "axes",
     "accounts",
     "timetable",
+    "schoolmeal",
+    "schoolcalendar",
     "usermemo",
     "apis",
 ]

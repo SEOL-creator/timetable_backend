@@ -11,10 +11,11 @@ urlpatterns = [
     path("", include(router.urls)),
     path("token/", CustomAuthToken.as_view(), name="token"),
     path("register/", views.RegisterView.as_view(), name="register"),
-    path("timetable/", views.TimetableView.as_view(), name="timetable"),
+    path("validatetoken/", views.validateToken, name="validatetoken"),
     path("classroom/", views.ClassroomView.as_view(), name="classroomlist"),
     path("teacher/", views.TeacherListView.as_view(), name="teacherlist"),
     path("teacher/<int:id>", views.TeacherView.as_view(), name="teacher"),
+    path("timetable/", views.TimetableView.as_view(), name="timetable"),
     path(
         "classtime/<int:grade>/<int:room>/",
         views.ClassTimeView.as_view(),
@@ -25,4 +26,10 @@ urlpatterns = [
         views.TempClassTimeView.as_view(),
         name="tempclasstime",
     ),
+    path(
+        "meal/<int:year>/<int:month>/<int:day>/", views.MealView.as_view(), name="meal"
+    ),
+    path("meal/<int:year>/<int:month>/", views.MealView.as_view(), name="meal"),
+    path("meal/", views.MealPostView.as_view(), name="postmeal"),
+    path("dday/", views.DdayView.as_view(), name="dday"),
 ]
