@@ -6,7 +6,7 @@ class MealItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MealItem
         fields = ("name", "allergy_codes")
-        ordering = ("-id",)
+        ordering = ("id",)
 
 
 class MealSerializer(serializers.ModelSerializer):
