@@ -26,7 +26,7 @@ class Meal(models.Model):
 class MealItem(models.Model):
     meal = models.ForeignKey(Meal, related_name="meal_item", on_delete=models.CASCADE)
     name = models.CharField(max_length=40)
-    allergy_codes = models.CharField(max_length=30, blank=True)
+    allergy_codes = models.CharField(max_length=80, blank=True)
 
     def __str__(self):
         return f"""{self.meal.date} {self.meal.get_type_display()} {self.name}"""
