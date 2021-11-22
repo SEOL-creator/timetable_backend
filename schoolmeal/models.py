@@ -28,5 +28,8 @@ class MealItem(models.Model):
     name = models.CharField(max_length=40)
     allergy_codes = models.CharField(max_length=80, blank=True)
 
+    class Meta:
+        ordering = ["id"]
+
     def __str__(self):
         return f"""{self.meal.date} {self.meal.get_type_display()} {self.name}"""
