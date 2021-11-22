@@ -1,6 +1,7 @@
 import datetime
 import json
 from django.contrib.auth.signals import user_logged_in
+from django.db import transaction
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -180,12 +181,13 @@ class MealPostView(APIView):
             number_of_people=int(number_of_people),
             calories=int(calories),
         )
-        for item in request.data.get("items"):
-            MealItem.objects.create(
-                meal=meal,
-                name=item.get("name"),
-                allergy_codes=item.get("allergy_codes"),
-            )
+        with transaction.atomic():
+            for item in request.data.get("items"):
+                MealItem.objects.create(
+                    meal=meal,
+                    name=item.get("name"),
+                    allergy_codes=item.get("allergy_codes"),
+                )
 
         return Response(status=201)
 
