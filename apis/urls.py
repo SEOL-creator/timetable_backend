@@ -32,4 +32,5 @@ urlpatterns = [
     path("meal/<int:year>/<int:month>/", views.MealView.as_view(), name="meal"),
     path("meal/", views.MealPostView.as_view(), name="postmeal"),
     path("dday/", views.DdayView.as_view(), name="dday"),
+    path("improvedtimetable/<int:grade>/<int:room>/<str:range>/", views.altered_timetable_view, name="testtimetable"),
 ]
