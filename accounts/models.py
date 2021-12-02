@@ -64,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
     )
     date_joined = models.DateTimeField(verbose_name="date joined", default=timezone.now)
-    profilepic = models.ImageField(upload_to=user_profilepic_path, default="")
+    profilepic = models.ImageField(upload_to=user_profilepic_path, default="", blank=True)
 
     objects = UserManager()
 
