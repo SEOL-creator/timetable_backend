@@ -4,10 +4,34 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
+    profilepic = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("nickname",)
+        fields = ("id", "email", "nickname", "profilepic")
         read_only_fields = ("id", "email")
+
+    def get_profilepic(self, obj):
+        return {
+            "512px": obj.profilepic_512px,
+            "50px": obj.profilepic_50px,
+            "256px": obj.profilepic_256px,
+        }
+
+
+class DetailedUserSerializer(serializers.ModelSerializer):
+    profilepic = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("id", "nickname", "email", "profilepic")
+
+    def get_profilepic(self, obj):
+        return {
+            "512px": obj.profilepic_512px,
+            "50px": obj.profilepic_50px,
+            "256px": obj.profilepic_256px,
+        }
 
 
 class RegisterSerializer(serializers.ModelSerializer):

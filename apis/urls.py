@@ -12,6 +12,13 @@ urlpatterns = [
     path("token/", CustomAuthToken.as_view(), name="token"),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("validatetoken/", views.validateToken, name="validatetoken"),
+    path("users/", views.UserListView.as_view(), name="userlist"),
+    path(
+        "users/uploadprofilepic/",
+        views.user_profile_pic_upload,
+        name="uploadprofilepic",
+    ),
+    path("users/<str:id>/", views.UserView.as_view(), name="user"),
     path("classroom/", views.ClassroomView.as_view(), name="classroomlist"),
     path("teacher/", views.TeacherListView.as_view(), name="teacherlist"),
     path("teacher/<int:id>", views.TeacherView.as_view(), name="teacher"),
@@ -32,5 +39,24 @@ urlpatterns = [
     path("meal/<int:year>/<int:month>/", views.MealView.as_view(), name="meal"),
     path("meal/", views.MealPostView.as_view(), name="postmeal"),
     path("dday/", views.DdayView.as_view(), name="dday"),
-    path("improvedtimetable/<int:grade>/<int:room>/<str:range>/", views.altered_timetable_view, name="testtimetable"),
+    path(
+        "improvedtimetable/<int:grade>/<int:room>/<str:range>/",
+        views.altered_timetable_view,
+        name="testtimetable",
+    ),
+    path(
+        "asked/userinfo/<str:userid>/",
+        views.asked_get_user_information,
+        name="asked_userinfo",
+    ),
+    path(
+        "asked/posts/<str:userid>/<int:page>/",
+        views.asked_get_posts,
+        name="asked_posts",
+    ),
+    path(
+        "asked/ask/",
+        views.asked_post_ask,
+        name="asked_ask",
+    ),
 ]

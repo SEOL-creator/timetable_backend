@@ -1,5 +1,5 @@
 from .base import *
-
+import os
 
 DEBUG = True
 
@@ -19,3 +19,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3001",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+
+MEDIA_URL = "http://localhost:8000/media/"
+MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, "media"))

@@ -5,6 +5,8 @@ from django.contrib.auth.hashers import make_password
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+import os
+import uuid
 
 
 class UserManager(BaseUserManager):
@@ -40,6 +42,11 @@ class UserManager(BaseUserManager):
         return self._create_user(email, nickname, password, **extra_fields)
 
 
+def user_profilepic_path(instance, filename):
+    id = instance.id
+    return os.path.join("profilepic", str(id), filename.lower())
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="Email", max_length=255, unique=True)
     nickname = models.CharField(verbose_name="Nickname", max_length=20, unique=True)
@@ -57,6 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
     )
     date_joined = models.DateTimeField(verbose_name="date joined", default=timezone.now)
+    profilepic = models.ImageField(upload_to=user_profilepic_path, default="")
 
     objects = UserManager()
 
@@ -81,3 +89,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.nickname
+
+    @property
+    def profilepic_512px(self):
+        if self.profilepic:
+            urlstr = str(self.profilepic.url)
+            newurlstr = urlstr[:-4] + "_512" + urlstr[-4:]
+            return newurlstr
+        return ""
+
+    @property
+    def profilepic_50px(self):
+        if self.profilepic:
+            urlstr = str(self.profilepic.url)
+            newurlstr = urlstr[:-4] + "_50" + urlstr[-4:]
+            return newurlstr
+        return ""
+
+    @property
+    def profilepic_256px(self):
+        if self.profilepic:
+            urlstr = str(self.profilepic.url)
+            newurlstr = urlstr[:-4] + "_256" + urlstr[-4:]
+            return newurlstr
+        return ""
