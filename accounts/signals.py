@@ -10,14 +10,14 @@ from PIL import Image
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def resize_image(sender, instance=None, update_fields=None, **kwargs):
+    if not update_fields:
+        return
     if "profilepic" in update_fields:
         profilepic = instance.profilepic
         fullpath = profilepic.path
         path = os.path.dirname(fullpath)
         extension = os.path.splitext(fullpath)[1]
         uid = uuid.uuid4()
-
-        print("signal triggererd")
 
         img = Image.open(fullpath)
         width, height = img.size
