@@ -64,6 +64,7 @@ class ClassTimeSerializer(serializers.ModelSerializer):
     # classroom = ClassroomSerializer(read_only=True)
 
     remoteURL = serializers.SerializerMethodField()
+    classtingURL = serializers.SerializerMethodField()
 
     def get_remoteURL(self, obj):
         urlOBJ = RemoteURL.objects.filter(_class=obj._class, classroom=obj.classroom)
@@ -72,9 +73,16 @@ class ClassTimeSerializer(serializers.ModelSerializer):
         else:
             return ""
 
+    def get_classtingURL(self, obj):
+        urlOBJ = ClasstingURL.objects.filter(_class=obj._class, classroom=obj.classroom)
+        if urlOBJ:
+            return urlOBJ[0].classtingurl
+        else:
+            return ""
+
     class Meta:
         model = ClassTime
-        fields = ("dayOfWeek", "time", "_class", "remoteURL")
+        fields = ("dayOfWeek", "time", "_class", "remoteURL", "classtingURL")
 
 
 class TempClassSerializer(serializers.ModelSerializer):

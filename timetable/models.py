@@ -225,3 +225,14 @@ class RemoteURL(models.Model):
 
     def __str__(self):
         return f"{self.classroom} {self._class.name}"
+
+
+class ClasstingURL(models.Model):
+    _class = models.ForeignKey(Class, verbose_name="수업", on_delete=models.CASCADE)
+    classroom = models.ForeignKey(
+        Classroom, verbose_name="학급", on_delete=models.CASCADE
+    )
+    classtingurl = models.CharField(max_length=600, verbose_name="ClasstingURL")
+
+    def __str__(self):
+        return f"{self.classroom} {self._class.name}"
