@@ -41,16 +41,22 @@ def resize_image(sender, instance=None, update_fields=None, **kwargs):
                 )
             )
 
-        img.save(os.path.join(path, str(uid) + extension), format="png")
+        img.save(os.path.join(path, str(uid) + ".jpg"), format="jpeg", quality=80)
         dst = img.resize((512, 512))
-        img.save(os.path.join(path, str(uid) + "_512" + extension), format="png")
+        img.save(
+            os.path.join(path, str(uid) + "_512" + ".jpg"), format="jpeg", quality=80
+        )
         dst = img.resize((256, 256))
-        dst.save(os.path.join(path, str(uid) + "_256" + extension), format="png")
+        dst.save(
+            os.path.join(path, str(uid) + "_256" + ".jpg"), format="jpeg", quality=80
+        )
         dst = img.resize((50, 50))
-        dst.save(os.path.join(path, str(uid) + "_50" + extension), format="png")
+        dst.save(
+            os.path.join(path, str(uid) + "_50" + ".jpg"), format="jpeg", quality=80
+        )
 
         instance.profilepic = os.path.join(
-            "profilepic", str(instance.id), str(uid) + extension
+            "profilepic", str(instance.id), str(uid) + ".jpg"
         )
 
         post_save.disconnect(resize_image, sender=settings.AUTH_USER_MODEL)
