@@ -24,7 +24,7 @@ class DetailedUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "email", "profilepic")
+        fields = ("id", "nickname", "email", "profilepic", "is_staff")
 
     def get_profilepic(self, obj):
         return {

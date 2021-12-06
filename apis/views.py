@@ -70,7 +70,7 @@ def validateToken(request):
         try:
             token = Token.objects.get(key=data["token"])
             user = token.user
-            serializer = UserSerializer(user)
+            serializer = DetailedUserSerializer(user)
             user_logged_in.send(sender=user.__class__, request=request, user=user)
         except Token.DoesNotExist:
             return JsonResponse({"valid": False}, status=200)
@@ -105,6 +105,16 @@ class UserView(APIView):
             queryset = get_object_or_404(User, id=id)
             serializer = UserSerializer(queryset, read_only=True)
         return Response(serializer.data)
+
+    def patch(self, request, id):
+        user = get_object_or_404(User, id=int(id))
+        if (request.user != user) and (not request.user.is_staff):
+            raise exceptions.PermissionDenied()
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -485,12 +495,16 @@ class ToDoListCommentView(APIView):
 
     def delete(self, request, commentid):
         comment = get_object_or_404(ToDoListComment, pk=commentid)
+        if (comment.author != request.user) and (not request.user.is_staff):
+            raise exceptions.PermissionDenied()
         comment.deleted = True
         comment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, todoid, commentid):
         comment = get_object_or_404(ToDoListComment, pk=commentid)
+        if (comment.author != request.user) and (not request.user.is_staff):
+            raise exceptions.PermissionDenied()
         serializer = ToDoListCommentSerializer(comment, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
