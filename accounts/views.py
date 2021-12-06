@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.signals import user_logged_in
 
+from accounts.serializers import UserSerializer
+
 
 # Create your views here.
 
@@ -57,10 +59,10 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
         user_logged_in.send(sender=user.__class__, request=request, user=user)
+        
         return Response(
             {
                 "token": token.key,
-                "email": user.email,
-                "nickname": user.nickname,
+                "user": UserSerializer(user).data
             }
         )
