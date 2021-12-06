@@ -59,4 +59,16 @@ urlpatterns = [
         views.asked_post_ask,
         name="asked_ask",
     ),
+    path("todolist/", views.TodoListView.as_view(), name="todolist"),
+    path("todolist/<int:pk>/", views.TodoListView.as_view(), name="todolistwithid"),
+    path(
+        "todolist/<int:todoid>/comments/",
+        views.ToDoListCommentView.as_view(),
+        name="todolistcomment",
+    ),
+    path(
+        "todolist/<int:todoid>/comments/<int:commentid>/",
+        views.ToDoListCommentView.as_view(),
+        name="todolistcommentwithid",
+    ),
 ]

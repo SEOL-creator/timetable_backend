@@ -1,4 +1,5 @@
 import datetime
+from functools import partial
 import json
 import os
 from django.contrib.auth.signals import user_logged_in
@@ -10,15 +11,14 @@ from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from urllib.parse import parse_qsl
-from rest_framework import permissions, generics, exceptions
-from rest_framework import response
+from rest_framework import permissions, generics, exceptions, serializers
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework import status
 from accounts.serializers import (
     DetailedUserSerializer,
     RegisterSerializer,
@@ -51,6 +51,8 @@ from schoolcalendar.serializers import (
     ScheduleSerializer,
 )
 from schoolcalendar.models import Schedule
+from usermemo.models import ToDoList, ToDoListComment
+from usermemo.serializers import ToDoListSerializer, ToDoListCommentSerializer
 
 UTC = datetime.timezone(datetime.timedelta(hours=0))
 
@@ -427,3 +429,70 @@ def asked_post_ask(requset):
     )
 
     return Response(response.text, response.status_code)
+
+
+class TodoListView(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get(self, request):
+        queryset = ToDoList.objects.filter(deleted=False).order_by("-created_at")
+        serializer = ToDoListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        request.data.update({"author": request.user.id})
+        serializer = ToDoListSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        todo = get_object_or_404(ToDoList, pk=pk)
+        todo.deleted = True
+        todo.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, pk):
+        todo = get_object_or_404(ToDoList, pk=pk)
+        serializer = ToDoListSerializer(todo, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ToDoListCommentView(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, todoid):
+        queryset = ToDoListComment.objects.filter(todolist=todoid).order_by(
+            "-created_at"
+        )
+        serializer = ToDoListCommentSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, todoid):
+        request.data.update({"todolist": todoid})
+        request.data.update({"author": request.user.id})
+        serializer = ToDoListCommentSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, commentid):
+        comment = get_object_or_404(ToDoListComment, pk=commentid)
+        comment.deleted = True
+        comment.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, todoid, commentid):
+        comment = get_object_or_404(ToDoListComment, pk=commentid)
+        serializer = ToDoListCommentSerializer(comment, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
