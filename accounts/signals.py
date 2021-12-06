@@ -19,7 +19,7 @@ def resize_image(sender, instance=None, update_fields=None, **kwargs):
         extension = os.path.splitext(fullpath)[1]
         uid = uuid.uuid4()
 
-        img = Image.open(fullpath)
+        img = Image.open(fullpath).convert("RGB")
         width, height = img.size
 
         if width > height:
