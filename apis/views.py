@@ -459,12 +459,16 @@ class TodoListView(APIView):
 
     def delete(self, request, pk):
         todo = get_object_or_404(ToDoList, pk=pk)
+        if (todo.author != request.user) and (not request.user.is_staff):
+            raise exceptions.PermissionDenied()
         todo.deleted = True
         todo.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, pk):
         todo = get_object_or_404(ToDoList, pk=pk)
+        if (todo.author != request.user) and (not request.user.is_staff):
+            raise exceptions.PermissionDenied()
         serializer = ToDoListSerializer(todo, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
