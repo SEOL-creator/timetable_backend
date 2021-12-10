@@ -5,7 +5,6 @@ import os
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "localhost",
     "api.classtime.kro.kr",
 ]
 
