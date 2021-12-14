@@ -148,7 +148,7 @@ class TimetableView(APIView):
         else:
             queryset = TimetableUseDate.objects.filter(
                 Q(startdate__lte=TODAY) | Q(startdate__gt=TODAY)
-            ).order_by("-startdate")
+            ).order_by("startdate")
         serializer = TimetableUseDateSerializer(queryset, many=True)
         return Response(serializer.data)
 
