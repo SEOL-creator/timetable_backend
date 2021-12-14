@@ -148,7 +148,7 @@ class TimetableView(APIView):
         else:
             queryset = TimetableUseDate.objects.filter(
                 Q(startdate__lte=TODAY) | Q(startdate__gt=TODAY)
-            )
+            ).order_by("-startdate")
         serializer = TimetableUseDateSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -220,7 +220,6 @@ class MealView(APIView):
             queryset = Meal.objects.filter(date__year=year, date__month=month).order_by(
                 "date", "type"
             )
-            print(queryset)
             serializer = MealSerializer(queryset, many=True)
         else:
             queryset = Meal.objects.filter(
