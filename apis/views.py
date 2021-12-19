@@ -1,5 +1,4 @@
 import datetime
-from functools import partial
 import json
 import os
 from django.contrib.auth.signals import user_logged_in
