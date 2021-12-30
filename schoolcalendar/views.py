@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import datetime
 
 from .serializers import (
     ScheduleSerializer,
@@ -12,8 +13,9 @@ class DdayView(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request):
-        queryset = Schedule.objects.filter(is_registered_dday=True).order_by(
-            "start_date", "end_date"
-        )
+        queryset = Schedule.objects.filter(
+            is_registered_dday=True,
+            end_date__gte=datetime.datetime.today() - datetime.timedelta(days=1),
+        ).order_by("start_date", "end_date")
         serializer = ScheduleSerializer(queryset, many=True)
         return Response(serializer.data)

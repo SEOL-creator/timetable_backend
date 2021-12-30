@@ -58,10 +58,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "axes",
     "accounts",
+    "school",
     "timetable",
     "schoolmeal",
     "schoolcalendar",
     "usermemo",
+    "board",
     "apis",
 ]
 

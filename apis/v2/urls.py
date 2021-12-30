@@ -9,4 +9,5 @@ urlpatterns = [
     path("meal/", include("schoolmeal.urls")),
     path("calendar/", include("schoolcalendar.urls")),
     path("asked/", include("asked.urls")),
+    path("boards/", include("board.urls")),
 ]

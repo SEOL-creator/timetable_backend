@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 import os
 import uuid
 
+from rest_framework.exceptions import ValidationError
+
 
 class UserManager(BaseUserManager):
     def _create_user(self, email, nickname, password, **extra_fields):
@@ -47,6 +49,14 @@ def user_profilepic_path(instance, filename):
     return os.path.join("profilepic", str(id), filename.lower())
 
 
+def nickname_validator(value):
+    FORBIDDEN_NICKNAMES = ("익명",)
+    if len(value) > 20:
+        raise ValidationError("닉네임은 20자를 초과할 수 없습니다.", params={"value": value})
+    if value in FORBIDDEN_NICKNAMES:
+        raise ValidationError("해당 닉네임은 사용할 수 없습니다.", params={"value": value})
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name="Email", max_length=255, unique=True)
     nickname = models.CharField(verbose_name="Nickname", max_length=20, unique=True)
@@ -64,7 +74,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         ),
     )
     date_joined = models.DateTimeField(verbose_name="date joined", default=timezone.now)
-    profilepic = models.ImageField(upload_to=user_profilepic_path, default="", blank=True)
+    profilepic = models.ImageField(
+        upload_to=user_profilepic_path, default="", blank=True
+    )
 
     objects = UserManager()
 
