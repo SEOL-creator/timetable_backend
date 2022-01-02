@@ -91,7 +91,7 @@ class TempClassTimeView(APIView):
         classroom = get_object_or_404(Classroom, grade=grade, room=room)
         TODAY = timezone.now()
         MONDAY = datetime.datetime(
-            TODAY.year,
+            (TODAY - datetime.timedelta(days=TODAY.weekday())).year,
             (TODAY - datetime.timedelta(days=TODAY.weekday())).month,
             (TODAY - datetime.timedelta(days=TODAY.weekday())).day,
             0,
