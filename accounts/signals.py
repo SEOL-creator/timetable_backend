@@ -43,7 +43,7 @@ def resize_image(sender, instance=None, update_fields=None, **kwargs):
 
         img.save(os.path.join(path, str(uid) + ".jpg"), format="jpeg", quality=80)
         dst = img.resize((512, 512))
-        img.save(
+        dst.save(
             os.path.join(path, str(uid) + "_512" + ".jpg"), format="jpeg", quality=80
         )
         dst = img.resize((256, 256))

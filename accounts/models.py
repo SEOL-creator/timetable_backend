@@ -105,23 +105,23 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def profilepic_512px(self):
         if self.profilepic:
-            urlstr = str(self.profilepic.url)
-            newurlstr = urlstr[:-4] + "_512" + urlstr[-4:]
-            return newurlstr
+            prev = os.path.splitext(self.profilepic.url)
+            new_url = prev[0] + "_512" + prev[1]
+            return new_url
         return ""
 
     @property
     def profilepic_50px(self):
         if self.profilepic:
-            urlstr = str(self.profilepic.url)
-            newurlstr = urlstr[:-4] + "_50" + urlstr[-4:]
-            return newurlstr
+            prev = os.path.splitext(self.profilepic.url)
+            new_url = prev[0] + "_50" + prev[1]
+            return new_url
         return ""
 
     @property
     def profilepic_256px(self):
         if self.profilepic:
-            urlstr = str(self.profilepic.url)
-            newurlstr = urlstr[:-4] + "_256" + urlstr[-4:]
-            return newurlstr
+            prev = os.path.splitext(self.profilepic.url)
+            new_url = prev[0] + "_256" + prev[1]
+            return new_url
         return ""

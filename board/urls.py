@@ -21,6 +21,7 @@ urlpatterns = [
         CommentView.as_view(),
         name="articlecomments",
     ),
+    path("article/<int:article_id>/vote/", Vote.as_view(), name="articlevote"),
     path(
         "article/<int:article_id>/like/", ArticleLikeView.as_view(), name="articlelike"
     ),

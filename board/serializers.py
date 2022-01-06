@@ -26,11 +26,66 @@ class BoardSerializer(serializers.ModelSerializer):
         return board
 
 
+class ArticleVoteItemSerializer(serializers.ModelSerializer):
+    voted = serializers.SerializerMethodField()
+
+    def get_voted(self, obj):
+        request = self.context["request"]
+        return obj.is_voted(request.user)
+
+    class Meta:
+        model = ArticleVoteItem
+        fields = (
+            "title",
+            "count",
+            "voted",
+        )
+
+
+class ArticleVoteSerializer(serializers.ModelSerializer):
+    votes = serializers.SerializerMethodField()
+
+    def get_votes(self, obj):
+        return ArticleVoteItemSerializer(
+            obj.votes, many=True, context=self.context
+        ).data
+
+    class Meta:
+        model = ArticleVote
+        fields = (
+            "vote_count",
+            "votes",
+        )
+
+
+class ArticlePhotoSerializer(serializers.ModelSerializer):
+    photo_square = serializers.SerializerMethodField()
+
+    def get_photo_square(self, obj):
+        return obj.photo_square
+
+    def get_photo_512px(self, obj):
+        return obj.photo_512px
+
+    class Meta:
+        model = ArticlePhoto
+        read_only_fields = ("photo_square", "photo_512px")
+        fields = (
+            "photo",
+            "photo_square",
+            "width",
+            "height",
+            "orientation",
+        )
+
+
 class ArticleSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     board = serializers.SerializerMethodField()
     am_i_author = serializers.SerializerMethodField()
+    vote = ArticleVoteSerializer(required=False)
+    photos = ArticlePhotoSerializer(required=False, many=True)
 
     def get_is_liked(self, obj):
         user = self.context["request"].user
@@ -64,6 +119,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             "comment_count",
             "is_anonymous",
             "am_i_author",
+            "vote",
+            "photos",
         )
 
 
@@ -72,11 +129,19 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
     am_i_author = serializers.SerializerMethodField()
+    vote = serializers.SerializerMethodField()
+    photos = ArticlePhotoSerializer(required=False, many=True)
 
     def get_comments(self, obj):
         queryset = Comment.objects.filter(article=obj, is_deleted=False)
         serializer = CommentSerializer(queryset, many=True, context=self.context)
         return serializer.data
+
+    def get_vote(self, obj):
+        if obj.vote:
+            return ArticleVoteSerializer(obj.vote, context=self.context).data
+        else:
+            return None
 
     def get_is_liked(self, obj):
         user = self.context["request"].user
@@ -108,6 +173,8 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
             "comments",
             "is_anonymous",
             "am_i_author",
+            "vote",
+            "photos",
         )
 
     def create(self, validated_data):

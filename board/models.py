@@ -1,4 +1,5 @@
 from django.db import models
+import os
 
 
 class Board(models.Model):
@@ -58,6 +59,80 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+def article_photo_path(instance, filename):
+    article_id = instance.article.id
+    return os.path.join("article", str(article_id), filename.lower())
+
+
+class ArticlePhoto(models.Model):
+    article = models.ForeignKey(
+        Article, related_name="photos", on_delete=models.CASCADE
+    )
+    photo = models.ImageField(upload_to="article_photos")
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
+    orientation = models.CharField(
+        max_length=10,
+        choices=(
+            ("HORIZONTAL", "수평"),
+            ("VERTICAL", "수직"),
+            ("SQUARE", "정사각형"),
+        ),
+        default="HORIZONTAL",
+    )
+
+    def __str__(self):
+        return self.article.title
+
+    @property
+    def photo_square(self):
+        prev = os.path.splitext(self.photo.url)
+        new_url = prev[0] + "_square" + prev[1]
+        return new_url
+
+
+class ArticleVote(models.Model):
+    article = models.OneToOneField(
+        Article, related_name="vote", on_delete=models.CASCADE
+    )
+    vote_count = models.IntegerField(default=0)
+
+
+class ArticleVoteItem(models.Model):
+    vote = models.ForeignKey(
+        ArticleVote,
+        related_name="votes",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    title = models.CharField(max_length=40)
+    count = models.IntegerField(default=0)
+    voted_users = models.ManyToManyField(
+        "accounts.User", related_name="voted_votes", blank=True
+    )
+
+    def do_vote(self, user):
+        if self.voted_users.filter(pk=user.pk).exists():
+            return
+        self.voted_users.add(user)
+        self.count += 1
+        self.vote.vote_count += 1
+        self.vote.save()
+        self.save()
+
+    def cancel_vote(self, user):
+        if self.voted_users.filter(pk=user.pk).exists():
+            self.voted_users.remove(user)
+            self.count -= 1
+            self.vote.vote_count -= 1
+            self.vote.save()
+            self.save()
+
+    def is_voted(self, user):
+        return self.voted_users.filter(pk=user.pk).exists()
 
 
 class Comment(models.Model):

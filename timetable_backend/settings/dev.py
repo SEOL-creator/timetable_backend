@@ -3,7 +3,7 @@ import os
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "172.20.10.3"]
 
 
 DATABASES = {
@@ -17,6 +17,7 @@ DATABASES = {
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://localhost:3001",
+    "http://172.20.10.3:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
