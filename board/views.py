@@ -72,7 +72,7 @@ class ArticleListView(APIView):
                     article=serializer.instance, photo=photo_name
                 )
                 article_photo.save()
-            if vote and vote[0] != "":
+            if vote is not None and vote[0] != "":
                 article_vote = ArticleVote(article=serializer.instance)
                 article_vote.save()
                 for item in vote:
@@ -174,8 +174,10 @@ class CommentView(APIView):
             request.data.update({"is_anonymous": True})
         elif article.board.type == "REAL":
             request.data.update({"is_anonymous": False})
+
+        # Get Anonymous User Number
         anonymous_number = -1
-        if article.board.type == "ANON" or request.data.get("is_anonymous"):
+        if request.data.get("is_anonymous") is True:
             if article.author == request.user:
                 anonymous_number = 0
             else:
@@ -185,13 +187,16 @@ class CommentView(APIView):
                 if prev_anon_comment.exists():
                     anonymous_number = prev_anon_comment.first().anonymous_number
                 else:
-                    anonymous_number = (
-                        Comment.objects.filter(article=article, is_anonymous=True)
-                        .order_by("-anonymous_number")
-                        .first()
-                        .anonymous_number
-                        + 1
-                    )
+                    biggest_anon_comment = Comment.objects.filter(
+                        article=article, is_anonymous=True
+                    ).order_by("-anonymous_number")
+                    if biggest_anon_comment.exists():
+                        anonymous_number = (
+                            biggest_anon_comment.first().anonymous_number + 1
+                        )
+                    else:
+                        anonymous_number = 1
+
         request.data.update({"anonymous_number": anonymous_number})
 
         serializer = CommentSerializer(data=request.data, context={"request": request})

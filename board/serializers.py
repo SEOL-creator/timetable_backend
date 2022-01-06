@@ -138,7 +138,7 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_vote(self, obj):
-        if obj.vote:
+        if hasattr(obj, "vote"):
             return ArticleVoteSerializer(obj.vote, context=self.context).data
         else:
             return None
