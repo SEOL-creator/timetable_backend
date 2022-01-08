@@ -5,6 +5,7 @@ import os
 DEBUG = False
 
 ALLOWED_HOSTS = [
+    "api.everygimpo.life",
     "api.classtime.kro.kr",
 ]
 
@@ -23,7 +24,7 @@ DATABASES = {
 REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ("rest_framework.renderers.JSONRenderer",)
 
 
-CORS_ORIGIN_WHITELIST = ["https://classtime.kro.kr"]
+CORS_ORIGIN_WHITELIST = ["https://everygimpo.life", "https://classtime.kro.kr"]
 CORS_ALLOW_CREDENTIALS = True
 
 
