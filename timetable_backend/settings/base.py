@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "accounts",
     "school",
     "timetable",
+    "timetable_v2",
     "schoolmeal",
     "schoolcalendar",
     "usermemo",
