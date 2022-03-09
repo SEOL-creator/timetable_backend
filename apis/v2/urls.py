@@ -6,6 +6,7 @@ urlpatterns = [
     path("version/", frontVersionView, name="version"),
     path("accounts/", include("accounts.urls")),
     path("timetable/", include("timetable.urls")),
+    path("timetablev2/", include("timetable_v2.urls")),
     path("meal/", include("schoolmeal.urls")),
     path("calendar/", include("schoolcalendar.urls")),
     path("asked/", include("asked.urls")),

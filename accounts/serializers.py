@@ -1,3 +1,4 @@
+from timetable.serializers import ClassroomSerializer
 from .models import User
 from rest_framework import serializers, validators
 from django.contrib.auth.password_validation import validate_password
@@ -5,10 +6,11 @@ from django.contrib.auth.password_validation import validate_password
 
 class UserSerializer(serializers.ModelSerializer):
     profilepic = serializers.SerializerMethodField()
+    classroom = ClassroomSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "email", "nickname", "profilepic")
+        fields = ("id", "email", "nickname", "profilepic", "classroom")
         read_only_fields = ("id", "email")
 
     def get_profilepic(self, obj):
@@ -21,10 +23,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class DetailedUserSerializer(serializers.ModelSerializer):
     profilepic = serializers.SerializerMethodField()
+    classroom = ClassroomSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "nickname", "email", "profilepic", "is_staff")
+        fields = ("id", "nickname", "email", "profilepic", "is_staff", "classroom")
 
     def get_profilepic(self, obj):
         return {

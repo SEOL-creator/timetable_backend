@@ -77,6 +77,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     profilepic = models.ImageField(
         upload_to=user_profilepic_path, default="", blank=True
     )
+    classroom = models.ForeignKey(
+        "timetable.Classroom",
+        verbose_name="학급",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        default=None,
+    )
 
     objects = UserManager()
 

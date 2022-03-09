@@ -19,7 +19,7 @@ class TimetableUseDateSerializer(serializers.ModelSerializer):
 class ClassroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classroom
-        fields = ("grade", "room")
+        fields = ("id", "grade", "room")
 
 
 class OfficeSerializer(serializers.ModelSerializer):

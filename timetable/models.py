@@ -93,6 +93,10 @@ class Classroom(models.Model):
         validators=[MaxValueValidator(12), MinValueValidator(1)],
     )
 
+    @property
+    def name(self):
+        return f"{self.get_grade_display()} {self.room}반"
+
     def __str__(self):
         return f"{self.get_grade_display()} {self.room}반"
 
