@@ -205,7 +205,9 @@ class FlexClassView(APIView):
                         "id": _class._class.teacher.id,
                         "name": _class._class.teacher.name,
                     },
-                    "location": _class._class.location,
+                    "location": ""
+                    if not _class._class.location
+                    else _class._class.location,
                     "color": _class._class.color.color,
                 }
             )
