@@ -187,5 +187,5 @@ def insert_colors():
         )
 
 
-# insert_timetables()
+insert_timetables()
 insert_colors()

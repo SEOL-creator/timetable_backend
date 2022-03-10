@@ -85,7 +85,7 @@ class TimetableWithDate(models.Model):
 
 
 class BaseClass(models.Model):
-    name = models.CharField(verbose_name="수업 이름", max_length=12, unique=True)
+    name = models.CharField(verbose_name="수업 이름", max_length=12)
     short_name = models.CharField(verbose_name="수업 축약 이름", max_length=4)
     teacher = models.ForeignKey(Teacher, verbose_name="담당 교사", on_delete=models.CASCADE)
     color = models.ForeignKey(
@@ -104,6 +104,9 @@ class BaseClass(models.Model):
 class StaticClass(BaseClass):
     def __str__(self):
         return self.name
+
+    class Meta:
+        unique_together = ("name", "teacher")
 
 
 class FlexibleClass(BaseClass):
