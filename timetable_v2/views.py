@@ -196,6 +196,8 @@ class FlexClassView(APIView):
 
         result = []
         for _class in classes:
+            if _class.type != "FLEXIBLE":
+                continue
             result.append(
                 {
                     "timetableitem_id": _class.id,
