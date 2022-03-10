@@ -103,7 +103,7 @@ class BaseClass(models.Model):
 
 class StaticClass(BaseClass):
     def __str__(self):
-        return self.name
+        return self.teacher.name + " " + self.name
 
     class Meta:
         unique_together = ("name", "teacher")
@@ -131,7 +131,7 @@ class FlexibleClass(BaseClass):
         return ""
 
     def __str__(self):
-        return self.location + " " + self.name
+        return self.location + " " + self.name + " " + self.teacher.name
 
     class Meta:
         unique_together = ("name", "location_classroom", "location_etc")
