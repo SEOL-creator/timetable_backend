@@ -189,6 +189,7 @@ class FlexClassView(APIView):
                 timetable__classroom__grade=classroom.grade,
                 day_of_week=day + 1,
                 time=time,
+                type="FLEXIBLE",
             )
             .order_by("timetable__classroom__grade", "timetable__classroom__room")
             .all()
@@ -196,8 +197,6 @@ class FlexClassView(APIView):
 
         result = []
         for _class in classes:
-            if _class.type != "FLEXIBLE":
-                continue
             result.append(
                 {
                     "timetableitem_id": _class.id,
@@ -223,7 +222,6 @@ class FlexClassView(APIView):
 
         UserClassTimetableItem.objects.create(
             user=request.user,
-            timetable=classtimetableitem.timetable,
             day_of_week=classtimetableitem.day_of_week,
             time=classtimetableitem.time,
             _class=classtimetableitem._class,
