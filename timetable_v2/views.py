@@ -22,7 +22,7 @@ import re
 class TimetableView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
-    def __get_timetabble(self, MON_DATE):
+    def __get_timetable(self, MON_DATE):
         timetables = []
         for i in range(0, 5):
             timetable = (
@@ -53,7 +53,7 @@ class TimetableView(APIView):
         FIRST_DATE_OF_WEEK = timezone.now().date() - datetime.timedelta(
             days=timezone.now().weekday()
         )
-        TIMETABLES = self.__get_timetabble(FIRST_DATE_OF_WEEK)
+        TIMETABLES = self.__get_timetable(FIRST_DATE_OF_WEEK)
         CLASS_TIMETABLE = ClassTimetableMaster.objects.filter(
             classroom=classroom
         ).first()
