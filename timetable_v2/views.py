@@ -69,7 +69,7 @@ class TimetableView(APIView):
                 date=FIRST_DATE_OF_WEEK + datetime.timedelta(days=day)
             ).first()
             classtimetable_target_day = day_swap.target_day - 1 if day_swap else day
-            is_day_changed = day_swap is not None
+            is_day_swapped = day_swap is not None
             for timetable in timetable_of_day:
                 _class = {
                     "type": "",
@@ -81,7 +81,7 @@ class TimetableView(APIView):
                     },
                     "location": "",
                     "color": "",
-                    "changed": False,
+                    "replaced": False,
                 }
                 timetable_item_object = None
                 if re.match("^[0-9]교시$", timetable.name):
@@ -169,7 +169,7 @@ class TimetableView(APIView):
                                         }
                                     )
 
-                    _class.update({"changed": is_day_changed})
+                    _class.update({"replaced": is_day_swapped})
                     timetable_item_object = {
                         "name": timetable.name,
                         "start_time": f"{str(timetable.start_time.hour).zfill(2)}:{str(timetable.start_time.minute).zfill(2)}:00",
