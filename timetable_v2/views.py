@@ -273,7 +273,7 @@ class TimeClassView(APIView):
                 }
             )
         for _class in UserTimeClass.objects.filter(user=user).all():
-            result["user_selected"][_class.time] = _class.id
+            result["user_selected"][_class.time] = _class._class.id
         return Response(result)
 
     def post(self, request, time):
