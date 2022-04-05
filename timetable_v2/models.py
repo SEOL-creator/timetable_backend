@@ -361,3 +361,14 @@ class UserClassTimetableItem(models.Model):
 
     class Meta:
         unique_together = ("user", "day_of_week", "time")
+
+
+class DaySwapAll(models.Model):
+    date = models.DateField(verbose_name="날짜")
+    target_day = DayOfTheWeekField(verbose_name="요일")
+
+    class Meta:
+        unique_together = (
+            "date",
+            "target_day",
+        )

@@ -7,6 +7,7 @@ from .models import (
     TimetableWithDate,
     UserClassTimetableItem,
     UserTimeClass,
+    DaySwapAll,
 )
 from timetable.models import Classroom
 from django.utils import timezone
@@ -64,8 +65,24 @@ class TimetableView(APIView):
         }
 
         for day, timetable_of_day in enumerate(TIMETABLES):
+            day_swap = DaySwapAll.objects.filter(
+                date=FIRST_DATE_OF_WEEK + datetime.timedelta(days=day)
+            ).first()
+            classtimetable_target_day = day_swap.target_day - 1 if day_swap else day
+            is_day_changed = day_swap is not None
             for timetable in timetable_of_day:
-                _class = None
+                _class = {
+                    "type": "",
+                    "name": "",
+                    "short_name": "",
+                    "teacher": {
+                        "id": "",
+                        "name": "",
+                    },
+                    "location": "",
+                    "color": "",
+                    "changed": False,
+                }
                 timetable_item_object = None
                 if re.match("^[0-9]교시$", timetable.name):
                     time = int(timetable.name[:1])  # 교시
@@ -78,84 +95,81 @@ class TimetableView(APIView):
                         pass
                     else:
                         class_timetable_item = ClassTimetableItem.objects.filter(
-                            timetable=CLASS_TIMETABLE, day_of_week=day + 1, time=time
+                            timetable=CLASS_TIMETABLE,
+                            day_of_week=classtimetable_target_day + 1,
+                            time=time,
                         ).first()
                         if class_timetable_item is not None:
                             if class_timetable_item.type == "STATIC":
-                                _class = {
-                                    "type": "static",
-                                    "name": class_timetable_item._class.name,
-                                    "short_name": class_timetable_item._class.short_name,
-                                    "teacher": {
-                                        "id": class_timetable_item._class.teacher.id,
-                                        "name": class_timetable_item._class.teacher.name,
-                                    },
-                                    "location": classroom.name,
-                                    "color": class_timetable_item._class.color.color,
-                                }
+                                _class.update(
+                                    {
+                                        "type": "static",
+                                        "name": class_timetable_item._class.name,
+                                        "short_name": class_timetable_item._class.short_name,
+                                        "teacher": {
+                                            "id": class_timetable_item._class.teacher.id,
+                                            "name": class_timetable_item._class.teacher.name,
+                                        },
+                                        "location": classroom.name,
+                                        "color": class_timetable_item._class.color.color,
+                                    }
+                                )
                             elif class_timetable_item.type == "FLEXIBLE":
                                 user_selected_class = (
                                     UserClassTimetableItem.objects.filter(
                                         user=user,
-                                        day_of_week=day + 1,
+                                        day_of_week=classtimetable_target_day + 1,
                                         time=time,
                                     ).first()
                                 )
                                 if user_selected_class is None:
-                                    _class = {
-                                        "type": "flexible_not_chosen",
-                                        "name": "",
-                                        "short_name": "",
-                                        "teacher": {
-                                            "id": "",
-                                            "name": "",
-                                        },
-                                        "location": "",
-                                        "color": "",
-                                    }
+                                    _class.update(
+                                        {
+                                            "type": "flexible_not_chosen",
+                                        }
+                                    )
                                 else:
-                                    _class = {
-                                        "type": "flexible",
-                                        "name": user_selected_class._class.name,
-                                        "short_name": user_selected_class._class.short_name,
-                                        "teacher": {
-                                            "id": user_selected_class._class.teacher.id,
-                                            "name": user_selected_class._class.teacher.name,
-                                        },
-                                        "location": user_selected_class._class.location,
-                                        "color": user_selected_class._class.color.color,
-                                    }
+                                    _class.update(
+                                        {
+                                            "type": "flexible",
+                                            "name": user_selected_class._class.name,
+                                            "short_name": user_selected_class._class.short_name,
+                                            "teacher": {
+                                                "id": user_selected_class._class.teacher.id,
+                                                "name": user_selected_class._class.teacher.name,
+                                            },
+                                            "location": user_selected_class._class.location,
+                                            "color": user_selected_class._class.color.color,
+                                        }
+                                    )
                             elif class_timetable_item.type == "TIME":
                                 user_selected_class = UserTimeClass.objects.filter(
                                     user=user,
                                     time=class_timetable_item._class,
                                 ).first()
                                 if user_selected_class is None:
-                                    _class = {
-                                        "type": "time_not_chosen",
-                                        "name": "",
-                                        "short_name": "",
-                                        "teacher": {
-                                            "id": "",
-                                            "name": "",
-                                        },
-                                        "location": "",
-                                        "color": "",
-                                    }
+                                    _class.update(
+                                        {
+                                            "type": "time_not_chosen",
+                                        }
+                                    )
                                 else:
-                                    _class = {
-                                        "type": "time",
-                                        "time": user_selected_class.time,
-                                        "name": user_selected_class._class.name,
-                                        "short_name": user_selected_class._class.short_name,
-                                        "teacher": {
-                                            "id": user_selected_class._class.teacher.id,
-                                            "name": user_selected_class._class.teacher.name,
-                                        },
-                                        "location": user_selected_class._class.location,
-                                        "color": user_selected_class._class.color.color,
-                                    }
+                                    _class.update(
+                                        {
+                                            "type": "time",
+                                            "time": user_selected_class.time,
+                                            "name": user_selected_class._class.name,
+                                            "short_name": user_selected_class._class.short_name,
+                                            "teacher": {
+                                                "id": user_selected_class._class.teacher.id,
+                                                "name": user_selected_class._class.teacher.name,
+                                            },
+                                            "location": user_selected_class._class.location,
+                                            "color": user_selected_class._class.color.color,
+                                        }
+                                    )
 
+                    _class.update({"changed": is_day_changed})
                     timetable_item_object = {
                         "name": timetable.name,
                         "start_time": f"{str(timetable.start_time.hour).zfill(2)}:{str(timetable.start_time.minute).zfill(2)}:00",
