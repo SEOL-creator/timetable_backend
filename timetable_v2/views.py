@@ -23,6 +23,16 @@ import re
 class TimetableView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
+    def __getNextMonday(self, date):
+        return date + datetime.timedelta(days=(7 - date.weekday()))
+
+    def __getFirstDate(self):
+        today = timezone.now().date()
+        if today.weekday() == 5 or today.weekday() == 6:
+            return self.__getNextMonday(today)
+        else:
+            return today
+
     def __get_timetable(self, MON_DATE):
         timetables = []
         for i in range(0, 5):
@@ -51,9 +61,7 @@ class TimetableView(APIView):
             raise BadRequest("User is not in a classroom")
 
         CURRENT_DATE = timezone.now()
-        FIRST_DATE_OF_WEEK = timezone.now().date() - datetime.timedelta(
-            days=timezone.now().weekday()
-        )
+        FIRST_DATE_OF_WEEK = self.__getFirstDate()
         TIMETABLES = self.__get_timetable(FIRST_DATE_OF_WEEK)
         CLASS_TIMETABLE = ClassTimetableMaster.objects.filter(
             classroom=classroom
