@@ -100,7 +100,17 @@ class TimetableView(APIView):
                         time=time,
                     ).all()
                     if len(temp_class) > 0:
-                        pass
+                        temp_timetable_item = temp_class.filter(time=time).first()
+                        _class.update(
+                            {
+                                "type": "temp",
+                                "name": temp_timetable_item.class_temp_custom_name,
+                                "short_name": temp_timetable_item.class_temp_custom_short_name,
+                                "location": temp_timetable_item.class_temp_custom_place,
+                                "color": "#999999",
+                                "replaced": True,
+                            }
+                        )
                     else:
                         class_timetable_item = ClassTimetableItem.objects.filter(
                             timetable=CLASS_TIMETABLE,
