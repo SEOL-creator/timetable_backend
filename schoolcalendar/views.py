@@ -15,7 +15,7 @@ class DdayView(APIView):
     def get(self, request):
         queryset = Schedule.objects.filter(
             is_registered_dday=True,
-            end_date__gte=datetime.datetime.today() - datetime.timedelta(days=1),
+            end_date__gte=datetime.datetime.today(),
         ).order_by("start_date", "end_date")
         serializer = ScheduleSerializer(queryset, many=True)
         return Response(serializer.data)
