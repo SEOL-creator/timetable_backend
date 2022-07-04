@@ -31,7 +31,7 @@ class TimetableView(APIView):
         if today.weekday() == 5 or today.weekday() == 6:
             return self.__getNextMonday(today)
         else:
-            return today - datetime.timedelta(days=today.weekday)
+            return today - datetime.timedelta(days=today.weekday())
 
     def __get_timetable(self, MON_DATE):
         timetables = []
